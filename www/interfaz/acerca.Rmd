@@ -1,0 +1,21 @@
+---
+title: "Acerca"
+output: html_document
+---
+
+Herramienta elaborada usando la data de libre acceso proporcionada por el paquete StatsbombR y el software estadístico R, a través de su paquete Shiny mediante el
+cual es posible realizar dashboards interesantes para la presentación de resultados.
+
+Para ver publicaciones similares comparto mis redes,
+
+* <a href="https://www.linkedin.com/in/freddy-f-tapia-c-667345a4/" target="_blank">Linkedin</a> 
+* <a href="https://github.com/Fr3ddy1/" target="_blank">Github</a>
+
+
+<p align="center">
+  <img src="logo.png">
+</p>
+
+
+
+
