@@ -20,7 +20,7 @@ shinyServer(function(input, output,session) {
     position=c("bottom", "bottom")
   ))
   
-  #PASOS - ESTACION 1
+  #PASOS - MODELOS
   steps_e1 <- reactive(data.frame(
     element=c("#menu2", "#e1","#uno","#tres"),
     intro=c("Sección modelos de predicción","Modelo goles esperados","Nombre del modelo de la sección",
@@ -68,115 +68,139 @@ shinyServer(function(input, output,session) {
   #/// MODELO XG ///#
   #/////////////////#
   
+  #APOYO NIVELES TRES VAR CATEGORICAS
+  #FUNCION QUE ME DEVUELVES NIVELES DE PAISES Y SECTORES
+  niveles <- reactive({
+    #CARGO DATA
+    df <- read.csv(paste0(getwd(),"/data_raw/Niveles_cat.csv"))
+    a1 <- as.character(unique(as.factor(df$nombre[which(df$var == "position.id")])))
+    a2 <- as.character(unique(as.factor(df$nombre[which(df$var == "shot.body_part.id")])))
+    #a3 <- as.character(unique(as.factor(df$nombre[which(df$var == "shot.technique.id")])))
+    
+    le <- list(a1,a2)
+    return(le)
+  })
+  
+  #NIVELES2
+  niveles2 <- reactive({
+    
+    
+    if (length(input$input_tec) != 0) {
+    #a2 <- ifelse(input$input_tec != "Palomita",c("Pie izquierdo","Pie derecho","Otro"),c("Cabeza"))
+    if(input$input_tec == "Taco" | input$input_tec == "Chilena" | 
+       input$input_tec == "Media volea" | input$input_tec == "Volea" |
+       input$input_tec == "Colocado" ) {
+      a2 <- c("Pie derecho","Pie izquierdo")
+    }else if(input$input_tec == "Palomita"){
+      a2 <- c("Cabeza")
+    }else if(input$input_tec == "Normal"){
+      a2 <- c("Otro","Cabeza","Pie derecho","Pie izquierdo")
+    }
+    
+    # if(input$input_tec == "Palomita"){
+    #   
+    #   a2 <- c("Cabeza")
+    # }
+      
+    }else{
+      a2 <- c(" ")
+      
+    }
+    
+      
+   
+    
+    #SALIDA
+    #le <- list(a2)
+    return(a2)
+    
+  })
+  
+  #ALTERNATIVA
+  observe({
+    updateSelectInput(session, "input_body", choices = niveles2())
+  })
+  
+  
   #DEFINO BOTONES A USAR COMO INPUTS
   output$input_etapa_l1 <- renderUI({ 
     
     box(id="tres",width=12,title="Entradas del modelo",status="primary",solidHeader=TRUE ,
         
         column(width = 4,
-               #box( width = 6, background = "navy",
-               numericInput("input_locx", "Coordenada x disparo:", 111, min = 0, max = 120) %>% 
+               numericInput("input_locx", "Coordenada x disparo:", 111, min = 0, max = 119) %>% 
                  helper(type = "inline",
                         title = "Descripción",
                         content = c("Por favor ingrese la coordenada x del campo donde el disparo fué efectuado, para más detalles ir a la sección de Bienvenida."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
                         ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
                         size = "m")
                
-               #)#final box
         ),
         
         column(width = 4,
-               #box( width = 6, background = "navy",
                numericInput("input_locy", "Coordenada y disparo:", 35, min = 0, max = 80) %>% 
                  helper(type = "inline",
                         title = "Descripción",
                         content = c("Por favor ingrese la coordenada y del campo donde el disparo fué efectuado, para más detalles ir a la sección de Bienvenida."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                                 ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
                         size = "m")
                
-               #)#final box
         ),
         
         column(width = 4,
-               #box( width = 6, background = "navy",
-               numericInput("input_locxGk", "Coordenada x Arquero:", 119, min = 0, max = 120) %>% 
+               numericInput("input_locxGk", "Coordenada x Arquero:", 119, min = 0, max = 119) %>% 
                  helper(type = "inline",
                         title = "Descripción",
                         content = c("Por favor ingrese la coordenada x del campo donde se ubica el arquero, para más detalles ir a la sección de Bienvenida. Favor tener cuidado al ingresar 
                                     coordenadas que indiquen que el arquero está muy lejos de la arquería, los resultados pueden ser imprecisos."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                         ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
                         size = "m")
                
-               #)#final box
         ),
         
         column(width = 4,
-               #box( width = 6, background = "navy",
                numericInput("input_locyGk", "Coordenada y Arquero:", 40, min = 0, max = 62) %>% 
                  helper(type = "inline",
                         title = "Descripción",
-                        content = c("Por favor ingrese la coordenada y del campo donde se ubica el arquero, para más detalles ir a la sección de Bienvenida.Favor tener cuidado al ingresar 
+                        content = c("Por favor ingrese la coordenada y del campo donde se ubica el arquero, para más detalles ir a la sección de Bienvenida. Favor tener cuidado al ingresar 
                                     coordenadas que indiquen que el arquero está muy lejos de la arquería, los resultados pueden ser imprecisos."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                                  ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
                         size = "m")
                
-               #)#final box
         ),
         
         column(width = 4,
-               #box( width = 6, background = "navy",
-               #numericInput("input2_e1_log", "Período:", 249, min = 1, max = 1000000000) %>% 
-               selectInput(inputId = "input_pos",label =  "ID posición:", choices = seq(2,25),selected = "22") %>% 
+               selectInput(inputId = "input_pos",label =  "Posición:", choices = niveles()[[1]],selected = "Delantero centro - ST") %>% 
                  helper(type = "inline",
                         title = "Descripción",
-                        content = c("Por favor ingrese el ID de la posición del jugador, para más detalles ir a la sección de Bienvenida."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
+                        content = c("Por favor indique la posición del jugador, para más información ver la descripción en la sección de bienvenida."
                         ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
                         size = "m")
                
-               #)#final box
         ),
         
+        ##
         column(width = 4,
-               #box( width = 6, background = "navy",
-               #numericInput("input5_e1_log", "ID patrón de juego :", 20, min = 1, max = 1000000000) %>% 
-               selectInput(inputId = "input_body",label =  "ID parte del cuerpo :", choices = c("37","38","40","70"),selected = "40") %>% 
+               selectInput(inputId = "input_tec",label =  "Técnica de disparo :", choices = c("Normal","Media volea","Volea","Colocado","Palomita","Taco","Chilena")) %>% 
                  helper(type = "inline",
                         title = "Descripción",
-                        content = c("Por favor ingrese el id de la parte del cuerpo con la cual el jugador remata, para más detalles ir a la sección de Bienvenida."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                        content = c("Por favor indique la técnica con la cual el jugador remata, para más detalles ir a la sección de Bienvenida."
+                      ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
@@ -184,15 +208,13 @@ shinyServer(function(input, output,session) {
                
         ),
         
+        
         column(width = 4,
-               selectInput(inputId = "input_bajo_pres",label =  "Bajo presión :", choices = c("1","0"),selected = "0") %>% 
+               selectInput(inputId = "input_bajo_pres",label =  "Bajo presión :", choices = c("Si","No"),selected = "No") %>% 
                   helper(type = "inline",
                         title = "Descripción",
-                        content = c("Por favor ingrese 1 si el jugador está bajo presión, ingrese 0 en caso contrario."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                        content = c("Por favor indique si el jugador está o no bajo presión, para más detalles ir a la sección de Bienvenida."
+                         ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
@@ -201,14 +223,11 @@ shinyServer(function(input, output,session) {
         ),
         
         column(width = 4,
-               selectInput(inputId = "input_first_time",label =  "Disparo por primera vez :", choices = c("1","0"),selected = "0") %>% 
+               selectInput(inputId = "input_first_time",label =  "Disparo de primera:", choices = c("Si","No"),selected = "No") %>% 
                  helper(type = "inline",
                         title = "Descripción",
-                        content = c("Por favor ingrese 1 si el jugador disparó por primera vez, ingrese 0 en caso contrario."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                        content = c("Por favor indique si el jugador disparó de primera, es decir sin controlar previamente el balón, para más detalles ir a la sección de Bienvenida."
+                          ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
@@ -216,14 +235,11 @@ shinyServer(function(input, output,session) {
                
         ),
         column(width = 4,
-               selectInput(inputId = "input_tec",label =  "ID técnica de disparo :", choices = seq(89,95),selected = "92") %>% 
+               selectInput(inputId = "input_body",label =  "Parte del cuerpo :", choices = niveles()[[2]],selected = "Pie derecho") %>% 
                  helper(type = "inline",
                         title = "Descripción",
-                        content = c("Por favor ingrese el id de la técnica con la cual el jugador remata, para más detalles ir a la sección de Bienvenida."
-                                    #"This is on a new line.",
-                                    #"This is some <b>HTML</b>.",
-                                    #"Note this modal has a different button label, fades in and is harder to close."
-                        ),
+                        content = c("Por favor indique la parte del cuerpo con la cual el jugador remata, para más detalles ir a la sección de Bienvenida."
+                                ),
                         buttonLabel = "Entendido!",
                         easyClose = FALSE,
                         fade = TRUE,
@@ -254,24 +270,32 @@ shinyServer(function(input, output,session) {
                                tener en cuenta que aún en caso de tener valores fuera
                                de rango el modelo arrojará resultado, sin embargo el resultado
                                será impreciso."
-                               #"This is on a new line.",
-                               #"This is some <b>HTML</b>.",
-                               #"Note this modal has a different button label, fades in and is harder to close."
-                   ),
+                              ),
                    buttonLabel = "Entendido!",
                    easyClose = FALSE,
                    fade = TRUE,
                    size = "m"),
           verbatimTextOutput("adv_etapa_l1"),
+          #VARIABLES CREADAS INTERNAMENTE
+          h4("Variables calculadas internamente:")  %>% 
+            helper(type = "inline",
+                   title = "Descripción",
+                   content = c("En esta sección se muestran las variables generadas internamente
+                               a partir de las coordenadas del remate y del arquero, para más detalle ver
+                               la sección de bienvenida."
+                             ),
+                   buttonLabel = "Entendido!",
+                   easyClose = FALSE,
+                   fade = TRUE,
+                   size = "m"),
+          DTOutput("result_etapa_l1"),
+          
            h4("xG obtenido:")  %>% 
             helper(type = "inline",
                    title = "Descripción",
                    content = c("En esta sección se muestran el xG obtenido, es decir, la probabilidad de que
                                con las condiciones dadas el remate termine en gol."
-                               #"This is on a new line.",
-                               #"This is some <b>HTML</b>.",
-                               #"Note this modal has a different button label, fades in and is harder to close."
-                   ),
+                     ),
                    buttonLabel = "Entendido!",
                    easyClose = FALSE,
                    fade = TRUE,
@@ -282,10 +306,7 @@ shinyServer(function(input, output,session) {
                    title = "Descripción",
                    content = c("En esta sección se muestra un campo de futbol con las ubicaciones
                                del disparo y arquero consideradas."
-                               #"This is on a new line.",
-                               #"This is some <b>HTML</b>.",
-                               #"Note this modal has a different button label, fades in and is harder to close."
-                   ),
+                      ),
                    buttonLabel = "Entendido!",
                    easyClose = FALSE,
                    fade = TRUE,
@@ -350,7 +371,7 @@ shinyServer(function(input, output,session) {
     
   })
   
-  #ME DEVUELVE INPUTS ELEGIDOS POR EL USUARIO
+  #ME DEVUELVE VARIABLES CREADAS INTERNAMENTE
   output$result_etapa_l1 <- renderDT({ 
     
     #agrego dependencia 
@@ -358,20 +379,37 @@ shinyServer(function(input, output,session) {
     #
     isolate({ 
       
-      Valor <-  c(input$input_pos,
-                  input$input_body,input$input_bajo_pres,
-                  input$input_first_time,input$input_tec,
+      Valor <-  c(
                   input$input_locx, input$input_locy, input$input_locxGk,
                   input$input_locyGk
       )
       
-      names(Valor) <- c("ID posición","ID parte del cuerpo",
-                        "Bajo presión","Primer disparo","ID técnica",
-                        "Coordenada x disparo","Coordenada y disparo",
-                        "Coordenada x arquero","Coordenada y arquero"
-                        )
+     
+      #PUNTO FIJO
+      p1 <- c(120,40)
       
-      as.data.frame(Valor)
+      #
+      p2 <- c(120,36)
+      p3 <- c(120,44)
+      
+      #
+      l1 <- sqrt((Valor[1] - p2[1])**2+((80 - Valor[2])-p2[2])**2)
+      l2 <- sqrt((Valor[1] - p3[1])**2+((80 - Valor[2])-p3[2])**2)
+      
+      #VARIABLES INTERNAS
+      DistToGoal <- sqrt((Valor[1]-p1[1])**2+(Valor[2]-p1[2])**2)
+      DistToKeeper <- sqrt((Valor[3]-p1[1])**2+(Valor[4]-p1[2])**2)
+      shot.angle <- acos((l1**2 + l2**2 - 8**2)/(2*l1*l2))*180/pi
+      
+      #CREO DF
+      df <- as.data.frame(matrix(NA,nrow = 3,ncol = 2))
+      names(df) <- c("Variable","Valor")
+      
+      df$Variable <- c("Distancia a gol","Distancia al arquero","Ángulo de tiro")
+      df$Valor <- c(DistToGoal,DistToKeeper,shot.angle)
+      df$Valor <- round(df$Valor,2)
+      
+      print(df)
       
     }) #final Isolate
     
@@ -387,7 +425,7 @@ shinyServer(function(input, output,session) {
     isolate({ 
       
       withProgress(message = 'Calculando probabilidad ...', value = 1/2, {
-      modelo <- xgb.load(paste0(getwd(),"/data_raw/xg_model_FT.model"))
+      modelo <- readRDS(paste0(getwd(),"/data_raw/xg_model_FT_caret_inicio.rds"))
       
       
       #TRABAJO IMPUT
@@ -399,6 +437,26 @@ shinyServer(function(input, output,session) {
 
       )
 
+      #PASO A NUMERICOS VALORES CATEGORICOS
+      #VARIABLES BINARIAS
+      a[1] <- ifelse(a[1]=="Si",1,0)
+      a[3] <- ifelse(a[3]=="Si",1,0)
+
+      #VARIABLES CON DESCRIPCION
+      #CARGO BASE
+      val <- read.csv(paste0(getwd(),"/data_raw/Niveles_cat.csv"))
+      
+      #CREO DF AUX
+      a1 <- as.data.frame(a)
+      names(a1) <- "nombre"
+      
+      #MERGE
+      a1 <- left_join(a1,val[,c(5,1)],by="nombre")
+      a1
+      
+      #ACTUALIZO
+      a[c(2,4,5)] <- a1$id[c(2,4,5)]
+      
       #
       a <- t(as.data.frame(as.numeric(a)))
       a <- as.data.frame(a)
@@ -414,10 +472,23 @@ shinyServer(function(input, output,session) {
       
       a$DistToGoal <- sqrt((a$location.x-p1[1])**2+(a$location.y-p1[2])**2)
       a$DistToKeeper <- sqrt((a$location.x.GK-p1[1])**2+(a$location.y.GK-p1[2])**2)
+
+      #
+      p2 <- c(120,36)
+      p3 <- c(120,44)
       
+      #
+      l1 <- sqrt((a$location.x - p2[1])**2+((80 - a$location.y)-p2[2])**2)
+      l2 <- sqrt((a$location.x - p3[1])**2+((80 - a$location.y)-p3[2])**2)
+      
+      
+      a$shot.angle <- acos((l1**2 + l2**2 - 8**2)/(2*l1*l2))*180/pi
+      
+      #FILTRO COORDENADAS
+      a <- a[-c(6:9)]
   
       #APLICO MODELO
-      pred <- predict(modelo, as.matrix(a), reshape = TRUE)
+      pred <- predict(modelo, newdata = as.matrix(a), type = "prob",reshape = TRUE)$x1
       
       #OUTPUT
       print(pred)
@@ -490,10 +561,10 @@ shinyServer(function(input, output,session) {
         ggplot2::annotate("path", x=107.84-10*cos(seq(-0.3*pi,0.3*pi,length.out=30)), size = 0.6,
                           y=40-10*sin(seq(-0.3*pi,0.3*pi,length.out=30)), col="green") +
 
-        geom_point(data = a1, aes(x = a.location.x, y = a.location.y, colour = player), size = 4
+        geom_point(data = a1, aes(x = a.location.x, y = 80 - a.location.y, colour = player), size = 4
         )+
         scale_size(range = c(0, 10))+
-        labs(title = "Disparo elegido", subtitle = "xG obtenido", colour = "Player"
+        labs(title = "Disparo elegido", subtitle = "Coordenadas consideradas", colour = "Player"
         )+
         theme(
           plot.title = element_text(color="blue", size=18, face="bold.italic",hjust = 0.5),

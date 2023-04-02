@@ -1,0 +1,6 @@
+Shiny app del modelo, para acceder vía online ir al siguiente enlace,
+
+https://fr3ddy.shinyapps.io/xg_model/
+
+En caso de querer ejecutar la aplicación localmente ejecutar cualquier script
+de la carpeta.

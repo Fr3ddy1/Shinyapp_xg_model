@@ -13,9 +13,9 @@ h2 { /* Header 2 */
 
 ## **Modelo de goles esperados**
 
-En el siguiente dashborad se puede apreciar el funcionamiento de un modelo predictivo de goles esperados, donde de acuerdo a ciertas características es posible saber la propabilidad de que un disparo sea gol o no.
+En el siguiente dashboard se puede apreciar el funcionamiento de un modelo predictivo de goles esperados, donde de acuerdo a ciertas características es posible saber la probabilidad de que un disparo sea gol o no.
 
-El modelo fue elaborado usando toda la información de libre acceso disponible en el paquete StatsbombR, la cual cuenta con una gran competiciones dentro de las que destacan,
+El modelo fue elaborado usando toda la información de libre acceso disponible en el paquete StatsbombR, la cual cuenta con un gran número de competiciones dentro de las que destacan,
 
 * **La Liga**: contiene información sobre 17 temporadas diferentes, empezando por la temporada 04/05.
 
@@ -39,6 +39,18 @@ El modelo fue elaborado usando toda la información de libre acceso disponible e
 
 <p align="center">
   <img src="wcup18.png">
+</p>
+
+* **Fifa World Cup 2022**: información de todos los partidos del mundial.
+
+<p align="center">
+  <img src="wcup22.png">
+</p>
+
+* **Super Liga India temporada 2021/2022**: información de todos los partidos de esta temporada.
+
+<p align="center">
+  <img src="sli.png">
 </p>
 
 
@@ -94,9 +106,11 @@ Una vez obtenida la base se procede a identificar la variable con la cual se va 
 * **Saved**: disparo detenido por el arquero.
 * **Saved Off Target**: disparo que iba por fuera que fué detenido por el arquero.
 * **Saved to Post**: dispara detenido que luego fue al poste.
-* **Wayward**": disparo sin peligro.
+* **Wayward**: disparo sin peligro.
 
-Para más detalle se acceder a este <a href="https://github.com/statsbomb/open-data/tree/master/doc" target="_blank">enlace</a>. A partir de las categorías anteriores se generó una variable binaria con 1 es gol y 0 es el resto de niveles.
+Para más detalle se puede acceder a este <a href="https://github.com/statsbomb/open-data/tree/master/doc" target="_blank">enlace</a> y observar la documentación de todos los eventos y variables disponibles en la data. Antes de crear la variable se eliminaron las observaciones relacionadas con los siguientes niveles "Off T", "Wayward", "Blocked", "Post" y "Saved off Target" debido a que son remates que no generan peligro real. 
+
+A partir del resto de categorías se generó una variable binaria donde 1 corresponde al nivel "Goal" y 0 el resto de niveles. 
 
 Una vez generada la variable objetivo se procede a la selección de las variables finales, las variables a usar en esta versión son,
 
@@ -104,34 +118,52 @@ Una vez generada la variable objetivo se procede a la selección de las variable
 * **position.id**: posición del jugador.
 
 <p align="center">
-  <img src="pos.png">
+  <img src="pos1.png">
 </p>
 
-* **shot.first_time**: variable binaria que indica si el jugador disparó por primera vez. 
+Posiciones consideradas en el campo,
+
+<p align="center">
+  <img src="posiciones.png">
+</p>
+
+* **shot.first_time**: variable binaria que indica si el jugador realizó el disparo de primera, es decir, sin un previo control del balón. 
 * **shot.body_part.id**: parte del cuerpo con el que se realizó el disparo.
 
 <p align="center">
-  <img src="body.png">
+  <img src="body1.png">
 </p>
 
 * **shot.technique.id**: tecnica del remate.
 
 <p align="center">
-  <img src="tecnica.png">
+  <img src="tecnica1.png">
 </p>
 
-* **location.x**: posición x del jugador al momento del disparo.
-* **location.y**: posición y del jugador al momento del disparo.
-* **location.x.GK**: posición x del arquero al momento del disparo.
-* **location.y.GK**: posición y del arquero al momento del disparo.
-* **DistToGoal** : variable calculada internamente como la distancia entre las coordenadas del disparo y el punto (120,40) que representa la línea de gol.
-* **DistToKeeper**: variable calculada internamente como la distancia entre las coordenadas del arquero y el punto (120,40) que representa la línea de gol. 
-
-En cuanto a las dimensiones del campo la siguiente imagen es útil para tener una referencia, los valores vienen expresados en metros,
+* **location.x**: coordenada “x” desde donde se efectuó el  disparo. Debe estar en el rango (0,120), por defecto las ocasiones siempre son en la arquería donde finaliza el campo, por lo tanto las coordenadas x deben estar cerca de esa zona para tener resultados precisos.
+* **location.y**: coordenada “y” desde donde se efectuó el  disparo.
 
 <p align="center">
-  <img src="campo.png">
+  <img src="pitch.png">
 </p>
+
+Por defecto Statsbomb usa para las coordenadas "y" la representación de arriba, es decir, su origen se encuentra en el extremo superior derecho.
+
+* **location.x.GK**: coordenada “x” del arquero al momento del disparo.
+* **location.y.GK**: coordenada “y” del arquero al momento del disparo.
+
+**Métricas generadas internamente**
+
+* **DistToGoal** : variable calculada internamente como la distancia entre las coordenadas del disparo y el punto (120,40) que representa la línea de gol.
+* **DistToKeeper**: variable calculada internamente como la distancia entre las coordenadas del arquero y el punto (120,40) que representa la línea de gol. 
+* **shot.angle**: ángulo de disparo el mismo se calcula usando la longitud de los lados del triángulo que se forma al unir la portería con el punto desde donde se remata.
+
+<p align="center">
+  <img src="angulo.png">
+</p>
+
+En la imagen anterior el ángulo de disparo sería el formado en el punto A, este valor viene dado por el arcoseno de la formula de la imagen. Los valores a, b y c miden la longitud de cada lado, por defecto el valor de "a" es la longitud de la portería que en este caso es de 8 metros.
+
 
 Mejores versiones pueden ser creadas al agregar más variables que se encuentran disponibles en la base.
 
@@ -140,7 +172,7 @@ Mejores versiones pueden ser creadas al agregar más variables que se encuentran
 Luego de lelegir las variables se procede a limpiar posibles outliers y a obtener el valor del IV ó information value el cual es un indicardor del poder predictivo de las variables a usar, los resultados otenidos son,
 
 <p align="center">
-  <img src="iv.png">
+  <img src="iv1.png">
 </p>
 
 <p align="center">
@@ -152,7 +184,7 @@ Luego de lelegir las variables se procede a limpiar posibles outliers y a obtene
 Utilizando la base anterior se generó el modelo de predicción el cual cuenta con las siguientes métricas de desempeño, 
 
 <p align="center">
-  <img src="metricas.png">
+  <img src="metricas1.png">
 </p>
 
 

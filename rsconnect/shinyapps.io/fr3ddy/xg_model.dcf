@@ -5,9 +5,9 @@ account: fr3ddy
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6947739
-bundleId: 6279458
+bundleId: 7039204
 url: https://fr3ddy.shinyapps.io/xg_model/
-when: 1662586863.68251
-lastSyncTime: 1662586863.68251
+when: 1680450570.98682
+lastSyncTime: 1680450570.98682
 asMultiple: FALSE
 asStatic: FALSE

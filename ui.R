@@ -82,12 +82,12 @@ shinyUI(
               
               
               #//////////////////#
-              #/// ESTACIONES ///#
+              #/// MODELOS    ///#
               #//////////////////#
               
               
               #//////////////////#
-              #/// ESTACION 1 ///#
+              #/// MODELO XG ///#
               #//////////////////#
               
               tabItem(tabName = "etapas_logit_1",
