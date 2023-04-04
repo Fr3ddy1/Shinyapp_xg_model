@@ -15,7 +15,7 @@ h2 { /* Header 2 */
 
 En el siguiente dashboard se puede apreciar el funcionamiento de un modelo predictivo de goles esperados, donde de acuerdo a ciertas características es posible saber la probabilidad de que un disparo sea gol o no.
 
-El modelo fue elaborado usando toda la información de libre acceso disponible en el paquete StatsbombR, la cual cuenta con un gran número de competiciones dentro de las que destacan,
+El modelo fue elaborado usando la información de libre acceso disponible en el paquete StatsbombR, la cual cuenta con un gran número de competiciones dentro de las que destacan,
 
 * **La Liga**: contiene información sobre 17 temporadas diferentes, empezando por la temporada 04/05.
 
@@ -188,7 +188,7 @@ Utilizando la base anterior se generó el modelo de predicción el cual cuenta c
 </p>
 
 
-A priori se observa con buen desempeño, sin embargo es recomendable hacer pruebas extra para demostrar el funcionamiento del modelo.
+A priori se observa con buen desempeño, sin embargo es recomendable hacer pruebas extra para demostrar el funcionamiento del modelo. Es importante señalar que esta versión del modelo sólo emplea data de competiciones masculinas. Es posible generar un modelo de goles esperados para el fútbol femenino con la data recopilada.
 
 
 #### **5. Predicción y creación dashboard**
